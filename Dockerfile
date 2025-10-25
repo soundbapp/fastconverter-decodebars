@@ -1,6 +1,10 @@
 # Use official Node.js runtime as base image
 FROM node:18-alpine
 
+# Install Python, pip, and yt-dlp
+RUN apk add --no-cache python3 py3-pip ffmpeg
+RUN pip3 install --break-system-packages yt-dlp
+
 # Set the working directory in the container
 WORKDIR /app
 
@@ -16,6 +20,9 @@ COPY . .
 # Create a non-root user to run the app
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
+
+# Ensure yt-dlp is accessible to the nodejs user
+RUN chmod +x /usr/local/bin/yt-dlp
 
 # Change ownership of the app directory to the non-root user
 RUN chown -R nextjs:nodejs /app
